@@ -18,10 +18,6 @@ def contact():
 def space():
     today_date = datetime.now().strftime("%Y-%m-%d")  # Get today's date
     return render_template('form.html', today_date=today_date)
-@app.route('/blog')
-def blog():
-    today_date = datetime.now().strftime("%Y-%m-%d")  # Get today's date
-    return render_template('blog.html', today_date=today_date)
 
 @app.route('/login')
 def login():
