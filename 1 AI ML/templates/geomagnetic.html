@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geomagnetic Storm Results</title>
+    <!-- Include Bootstrap CSS from CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        /* Custom styles for hover effect */
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa; /* Light gray background on hover */
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Geomagnetic Storm Results</h1>
+        
+        <!-- Geomagnetic Storm Data Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>GST ID</th>
+                        <th>Start Time (UTC)</th>
+                        <th>Kp Index</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in filtered_data %}
+                        <tr>
+                            <td>{{ entry.gstID }}</td>
+                            <td>{{ entry.startTime }}</td>
+                            {% if entry.allKpIndex %}
+                                <td>{{ entry.allKpIndex[0].kpIndex }}</td> <!-- Displaying the first Kp Index -->
+                            {% else %}
+                                <td>N/A</td>
+                            {% endif %}
+                            <td>
+                                <a href="{{ entry.link }}" target="_blank" class="text-primary">View Details</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not filtered_data %}
+            <p class="text-center text-danger mt-4">No data available for the selected date range.</p>
+        {% endif %}
+
+        <!-- Chart Container -->
+        <h2 class="text-center mt-5">Kp Index Over Time</h2>
+        <canvas id="kpIndexChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Include Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Prepare data for Chart.js
+        const geomagneticData = {{ filtered_data | tojson }};
+
+        // Extracting labels (start time) and Kp Index values
+        const labels = geomagneticData.map(entry => entry.startTime); // Extracting start time
+        const kpIndexValues = geomagneticData.map(entry => {
+            if (entry.allKpIndex && entry.allKpIndex.length > 0) {
+                return entry.allKpIndex[0].kpIndex; // Getting the first Kp Index
+            }
+            return null; // In case of no Kp Index
+        }).filter(value => value !== null); // Filtering out null values
+
+        // Create the Chart.js bar chart
+        const ctx = document.getElementById('kpIndexChart').getContext('2d');
+        const kpIndexChart = new Chart(ctx, {
+            type: 'bar', // Define chart type (bar chart)
+            data: {
+                labels: labels, // Start Times on the X-axis
+                datasets: [{
+                    label: 'Kp Index',
+                    data: kpIndexValues, // Kp Index values on the Y-axis
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Bar fill color
+                    borderColor: 'rgb(75, 192, 192)', // Bar border color
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Kp Index Over Time'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Start Time (UTC)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Kp Index'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Include Bootstrap JS from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

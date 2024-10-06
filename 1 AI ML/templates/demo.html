@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select API or Mars Mission</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('https://wallpapers.com/images/hd/4k-space-galaxy-and-universe-fmyy2okp0f9e3x7y.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .form_div {
+            background-color: rgba(19, 3, 3, 0.8); 
+            opacity: 0.8;
+           color: black; 
+        }
+        .option_icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto py-8">
+        <h1 class="text-4xl font-extrabold text-center text-white mb-8">Explore Space Weather & Mars Mission</h1>
+        <div class="form_div bg-white shadow-lg rounded-lg p-6 mb-10 max-w-md mx-auto">
+            <h2 class="text-2xl font-semibold mb-4">Select an Option</h2>
+            <label for="form_choice" class="block mb-2">What would you like to explore?</label>
+            <select id="form_choice" class="form-control" onchange="showForm()">
+              <option value="none">-- Select --</option>
+              <option value="nasa_api">
+                <i class="fas fa-sun option_icon" alt="Solar Weather Icon"></i> Space Weather
+              </option>
+              <option value="mars_photos">
+                <i class="fas fa-mars option_icon" alt="Mars Mission Icon"></i> Mars and Earth
+              </option>
+            </select>
+        </div>
+
+        <!-- NASA API Data Form -->
+        <div id="nasa_api_form" class="form_div bg-white shadow-lg rounded-lg p-6 mb-8 max-w-md mx-auto hidden">
+            <h2 class="text-2xl font-semibold mb-4">Search Space Weather</h2>
+            <form method="POST" action="/get_data" class="space-y-4">
+                <div>
+                    <label for="api_choice" class="block mb-2">Select Data:</label>
+                    <select id="api_choice" name="api_choice" class="form-control" required>
+                        <option value="solar_flare">Solar Flare</option>
+                        <option value="cme_analysis">CME Analysis</option>
+                        <option value="geomagnetic_storms">Geomagnetic Storms</option>
+                        <option value="solar_energetic_particles">Solar Energetic Particles</option>
+                        <option value="magnetosphere">Magnetosphere</option>
+                        <option value="high_speed_streams">High Speed Streams</option>
+                        <option value="interplanetary_shock">Interplanetary Shock</option>
+                        <option value="notification">Notification</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="start_date" class="block mb-2">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control" required>
+                </div>
+
+                <div>
+                    <label for="end_date" class="block mb-2">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-4">Search</button>
+            </form>
+        </div>
+
+        <!-- Mars Photos Form -->
+        <div id="mars_photos_form" class="form_div bg-white shadow-lg rounded-lg p-6 mb-8 max-w-md mx-auto hidden">
+            <h2 class="text-2xl font-semibold mb-4">Mars and Earth</h2>
+            <form method="POST" action="/get_data" class="space-y-4">
+                <div>
+                    <label for="api_choice" class="block mb-2">Select Mars Camera:</label>
+                    <select id="api_choice" name="api_choice" class="form-control" required>
+                        <option value="fhac">Front Hazard Avoidance Camera Mars</option>
+                        <option value="rhac">Rear Hazard Avoidance Camera Mars</option>
+                        <option value="nc">Navigation Camera Mars</option>
+                        <option value="eimg">Earth Coordinates</option>
+                        <option value="obimg">Object near earth</option>
+                        <option value="picture">Astronomy Picture of the Day</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-4">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showForm() {
+            const selectedForm = document.getElementById('form_choice').value;
+            const nasaApiForm = document.getElementById('nasa_api_form');
+            const marsPhotosForm = document.getElementById('mars_photos_form');
+            nasaApiForm.classList.add('hidden');
+            marsPhotosForm.classList.add('hidden');
+            if (selectedForm === 'nasa_api') {
+                nasaApiForm.classList.remove('hidden');
+            } else if (selectedForm === 'mars_photos') {
+                marsPhotosForm.classList.remove('hidden');
+            }
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start_date').setAttribute('max', today);
+        document.getElementById('end_date').setAttribute('max', today);
+    </script>
+</body>
+</html>

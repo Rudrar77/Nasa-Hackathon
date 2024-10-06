@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Near Earth Objects</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-4">
+        <h2 class="text-center mb-4">Near Earth Objects</h2>
+
+        {% if filtered_data %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Absolute Magnitude</th>
+                        <th>Estimated Diameter (km)</th>
+                        <th>Close Approach Date</th>
+                        <th>NASA JPL URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in filtered_data['near_earth_objects'] %}
+                    <tr>
+                        <td>{{ item['name'] }}</td>
+                        <td>{{ item['absolute_magnitude_h'] }}</td>
+                        <td>
+                            Min: {{ item['estimated_diameter']['kilometers']['estimated_diameter_min'] | round(2) }} km<br>
+                            Max: {{ item['estimated_diameter']['kilometers']['estimated_diameter_max'] | round(2) }} km
+                        </td>
+                        <td>
+                            {% if item['close_approach_data'] %}
+                                {{ item['close_approach_data'][0]['close_approach_date'] }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ item['nasa_jpl_url'] }}" target="_blank">View Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning text-center" role="alert">
+            No data available for the selected date range.
+        </div>
+        {% endif %}
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

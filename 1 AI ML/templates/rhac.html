@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mars Rover Photos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-4">
+        <h2 class="text-center mb-4">Mars Rover Photos</h2>
+
+        <!-- Check if data is available -->
+        {% if filtered_data and filtered_data['photos'] %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Photo ID</th>
+                        <th>Sol</th>
+                        <th>Camera Name</th>
+                        <th>Rover Name</th>
+                        <th>Earth Date</th>
+                        <th>Photo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through each photo in the data -->
+                    {% for photo in filtered_data['photos'] %}
+                    <tr>
+                        <td>{{ photo.id }}</td>
+                        <td>{{ photo.sol }}</td>
+                        <td>{{ photo.camera.full_name }}</td>
+                        <td>{{ photo.rover.name }}</td>
+                        <td>{{ photo.earth_date }}</td>
+                        <td>
+                            <a href="{{ photo.img_src }}" target="_blank">
+                                <img src="{{ photo.img_src }}" alt="Mars Photo" class="img-thumbnail" width="100">
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning text-center" role="alert">
+            No data available for the selected date.
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

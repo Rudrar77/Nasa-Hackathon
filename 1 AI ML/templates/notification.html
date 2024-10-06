@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa; /* Light gray background on hover */
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">NASA Notifications</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Message Type</th>
+                        <th>Message ID</th>
+                        <th>Issue Time</th>
+                        <th>Message Body</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if filtered_data %}
+                        {% for notification in filtered_data %}
+                            <tr>
+                                <td>{{ notification.messageType }}</td>
+                                <td>{{ notification.messageID }}</td>
+                                <td>{{ notification.messageIssueTime }}</td>
+                                <td>{{ notification.messageBody | replace('\n##', '<br>') | replace('##','')|safe }}</td>
+                                <td><a href="{{ notification.messageURL }}" target="_blank" class="text-primary">View Details</a></td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-danger">No notifications found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

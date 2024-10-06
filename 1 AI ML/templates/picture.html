@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astronomy Picture of the Day</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #e9ecef;
+        }
+        .img-thumbnail {
+            max-width: 300px; /* Adjust size as needed */
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Astronomy Picture of the Day</h1>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th>Explanation</th>
+                    <th>HD URL</th>
+                    <th>Image</th> <!-- New column for the image -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ filtered_data.title }}</td>
+                    <td>{{ filtered_data.date }}</td>
+                    <td>{{ filtered_data.explanation | safe }}</td>
+                    <td><a href="{{ filtered_data.hdurl }}" target="_blank">View HD Image</a></td>
+                    <td><img src="{{ filtered_data.url }}" alt="Astronomy Image" class="img-thumbnail" /></td> <!-- Display image -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Flare Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <!-- Include Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Solar Flare Data</h1>
+        
+        {% if filtered_data %}
+        <!-- Displaying data in table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Start Time</th>
+                        <th>Class Type</th>
+                        <th>Source Location</th>
+                        <th>Active Region</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in filtered_data %}
+                    <tr>
+                        <td>{{ item['beginTime'] }}</td>
+                        <td>{{ item['classType'] }}</td>
+                        <td>{{ item['sourceLocation'] }}</td>
+                        <td>{{ item['activeRegionNum'] }}</td>
+                        <td>
+                            <a href="{{ item['link'] }}" target="_blank" class="text-primary">View Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Chart container -->
+        <h2 class="text-center mt-5">Solar Flare Occurrences by Date</h2>
+        <canvas id="solarFlareChart" width="400" height="200"></canvas>
+
+        {% else %}
+        <p class="text-danger text-center">No data available for the selected date range.</p>
+        {% endif %}
+    </div>
+    <script>
+        // Prepare data for Chart.js
+        const solarFlareData = {{ filtered_data | tojson }};
+        
+        // Process the classType and count occurrences
+        const classTypeCount = {};
+        solarFlareData.forEach(item => {
+            const classType = item.classType;  // Get the classType (e.g., X, M, C)
+            classTypeCount[classType] = (classTypeCount[classType] || 0) + 1; // Count occurrences per classType
+        });
+    
+        // Extract labels (classTypes) and data (flare counts)
+        const labels = Object.keys(classTypeCount);  // Class Types (e.g., X, M, C)
+        const data = Object.values(classTypeCount);  // Count of flares per classType
+    
+        // Create the Chart.js bar chart
+        const ctx = document.getElementById('solarFlareChart').getContext('2d');
+        const solarFlareChart = new Chart(ctx, {
+            type: 'bar', // Define chart type (bar chart)
+            data: {
+                labels: labels, // Class Types on the X-axis
+                datasets: [{
+                    label: 'Solar Flare Count by Class Type',
+                    data: data,  // Flares count on the Y-axis
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Bar fill color
+                    borderColor: 'rgb(75, 192, 192)', // Bar border color
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Solar Flares Count by Class Type'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Class Type'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Flare Count'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>    
+    <!-- Include Bootstrap JS from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

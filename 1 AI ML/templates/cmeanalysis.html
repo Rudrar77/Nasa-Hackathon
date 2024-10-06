@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CME Analysis Results</title>
+    <!-- Include Bootstrap CSS from CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles for hover effect */
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa; /* Light gray background on hover */
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">CME Analysis Results</h1>
+        
+        <!-- CME Data Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Time (UTC)</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Speed (km/s)</th>
+                        <th>Associated CME ID</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in filtered_data %}
+                        <tr>
+                            <td>{{ entry.time21_5 }}</td>
+                            <td>{{ entry.latitude }}</td>
+                            <td>{{ entry.longitude }}</td>
+                            <td>{{ entry.speed }}</td>
+                            <td>{{ entry.associatedCMEID }}</td>
+                            <td>
+                                <a href="{{ entry.link }}" target="_blank" class="text-primary">View Analysis</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not filtered_data %}
+            <p class="text-center text-danger mt-4">No data available for the selected date range.</p>
+        {% endif %}
+
+        <!-- Chart Container -->
+        <h2 class="text-center mt-5">CME Speeds</h2>
+        <canvas id="cmeChart" width="400" height="200"></canvas>
+        
+        <script>
+            // Prepare data for Chart.js
+            const cmeData = {{ filtered_data | tojson }};
+            
+            // Extract speeds for the chart
+            const speeds = cmeData.map(entry => entry.speed);
+            const times = cmeData.map(entry => entry.time21_5); // Optional: Use times for X-axis labels
+
+            // Create the Chart.js line chart
+            const ctx = document.getElementById('cmeChart').getContext('2d');
+            const cmeChart = new Chart(ctx, {
+                type: 'line', // Define chart type (line chart)
+                data: {
+                    labels: times, // X-axis labels (times)
+                    datasets: [{
+                        label: 'CME Speed (km/s)',
+                        data: speeds,  // CME speeds on the Y-axis
+                        fill: false,
+                        borderColor: 'rgba(75, 192, 192, 1)', // Line color
+                        tension: 0.1 // Smoothness of the line
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'CME Speeds Over Time'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time (UTC)'
+                            },
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 20 // Optional: limit the number of X-axis ticks
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Speed (km/s)'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    </div>
+
+    <!-- Include Bootstrap JS from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
